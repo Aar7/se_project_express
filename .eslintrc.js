@@ -1,3 +1,6 @@
+// console.log(834);
+const _or = 99;
+
 module.exports = {
   env: {
     es2021: true,
@@ -21,5 +24,6 @@ module.exports = {
   },
   rules: {
     "no-underscore-dangle": 0,
+    "no-console": 0,
   },
 };

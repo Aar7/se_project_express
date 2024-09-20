@@ -4,10 +4,9 @@ const {
   createItem,
   deleteItem,
 } = require("../controllers/clothingItems");
-// get user data
 
-clothingItemsRouter.get("/items", getItems);
-clothingItemsRouter.post("/items", createItem);
-clothingItemsRouter.delete("/items:itemId", deleteItem);
+clothingItemsRouter.get("/", getItems);
+clothingItemsRouter.post("/", createItem);
+clothingItemsRouter.delete("/:itemId", deleteItem);
 
-module.exports = clothingItems;
+module.exports = clothingItemsRouter;

@@ -21,6 +21,9 @@ getUser = (req, res) => {
 
 createUser = (req, res) => {
   const { name, avatar } = req.body;
+  // console.log(req.body);
+  console.log("createUser run");
+  // res.send("Response from createUser");
 
   User.create({ name, avatar })
     .then((user) => res.send({ data: user }))

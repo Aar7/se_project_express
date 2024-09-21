@@ -1,33 +1,38 @@
 const User = require("../models/user");
-// getUsers, getUser, and createUser
-getUsers = (req, res) => {
-  User.find()
-    .then((users) => res.send(users))
-    .catch((err) => res.status(500).send({ message: "Error from getUsers" }));
-};
+const { docNotFound, returnError } = require("../utils/errors");
 
-getUser = (req, res) => {
-  User.findById(req.params.id)
-    .then((user) => {
-      if (!user) {
-        return Promise.reject("User not found");
-      }
-      res.send({ data: user });
-    })
-    .catch((err) => {
-      res.status(500).send({ message: "User not found" });
+const getUsers = (req, res) => {
+  User.find()
+    .orFail(docNotFound)
+    .then((users) => res.send(users))
+    .catch((error) => {
+      returnError(res, error);
+      // res.status(500).send({ message: "Error from getUsers" });
     });
 };
 
-createUser = (req, res) => {
+const getUser = (req, res) => {
+  console.log(req.params.userId);
+  User.findById(req.params.userId)
+    .orFail(docNotFound)
+    .then((user) => {
+      res.send({ data: user });
+    })
+    .catch((error) => {
+      returnError(res, error);
+      // res.status(500).send({ message: "User not found" });
+    });
+};
+
+const createUser = (req, res) => {
   const { name, avatar } = req.body;
-  // console.log(req.body);
-  console.log("createUser run");
-  // res.send("Response from createUser");
 
   User.create({ name, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: "Error creating user" }));
+    .catch((error) => {
+      returnError(res, error);
+      // res.status(500).send({ message: "Error creating user" });
+    });
 };
 
 module.exports = { getUsers, getUser, createUser };

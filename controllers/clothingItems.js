@@ -1,29 +1,30 @@
 const ClothingItem = require("../models/clothingItem");
-// getItems, createItem, deleteItem
+const { docNotFound, returnError } = require("../utils/errors");
 
-getItems = (req, res) => {
+const getItems = (req, res) => {
   ClothingItem.find()
+    .orFail(docNotFound)
     .then((items) => res.send(items))
-    .catch((err) =>
-      res.status(500).send({ message: "Error getting clothing items" })
-    );
+    .catch((error) => returnError(res, error));
 };
 
-createItem = (req, res) => {
+const createItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
   ClothingItem.create({ name, weather, imageUrl })
     .then((item) => res.send({ data: item }))
-    .catch((err) =>
-      res.status(500).send({ message: "There was an issue creating this item" })
-    );
+    .catch((error) => {
+      returnError(res, error);
+      // res
+      //   .status(500)
+      //   .send({ message: "There was an issue creating this item" });
+    });
 };
 
-deleteItem = (req, res) => {
-  ClothingItem.findByIdAndRemove(req.params._id)
+const deleteItem = (req, res) => {
+  ClothingItem.findByIdAndRemove(req.params.itemId)
+    .orFail(docNotFound)
     .then((item) => res.send({ data: item }))
-    .catch((err) =>
-      res.status(500).send({ message: "Cannot remove specified resource" })
-    );
+    .catch((error) => returnError(res, error));
 };
 
 module.exports = { getItems, createItem, deleteItem };

@@ -15,9 +15,6 @@ app.use((req, res, next) => {
   };
   next();
 });
-module.exports.createClothingItem = (req /* , res */) => {
-  console.log(req.user._id);
-};
 
 app.use(express.json());
 app.use("/", mainRouter);

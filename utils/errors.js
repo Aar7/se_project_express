@@ -1,39 +1,6 @@
-// /**
-//  * Invalid data
-//  */
-// const error_400 = {
-//   statusCode: 400,
-//   statusMsg: "Invalid data",
-// };
-
-// /**
-//  * Resource not found
-//  */
-// const error_404 = {
-//   statusCode: 404,
-//   statusMsg: "Resource not found",
-// };
-
-// /**
-//  * Server error
-//  */
-// const error_500 = {
-//   statusCode: 500,
-//   statusMsg: "Server error",
-// };
-
 const BAD_REQUEST_CODE = 400;
 const NOT_FOUND_CODE = 404;
 const INT_SERVER_ERROR_CODE = 500;
-
-/**
- * Throws an error when the requested resource cannot be found
- */
-// const docNotFound = () => {
-//   const error = new Error("Resource not found");
-//   error.statusCode = 404;
-//   throw error;
-// };
 
 /**
  * Determines the type of error that was thrown and returns it to the user
@@ -56,4 +23,9 @@ const returnError = (res, error) => {
   });
 };
 
-module.exports = { returnError };
+module.exports = {
+  returnError,
+  BAD_REQUEST_CODE,
+  NOT_FOUND_CODE,
+  INT_SERVER_ERROR_CODE,
+};

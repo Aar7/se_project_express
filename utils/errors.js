@@ -22,9 +22,9 @@
 //   statusMsg: "Server error",
 // };
 
-BAD_REQUEST_CODE = 400;
-NOT_FOUND_CODE = 404;
-INT_SERVER_ERROR_CODE = 500;
+const BAD_REQUEST_CODE = 400;
+const NOT_FOUND_CODE = 404;
+const INT_SERVER_ERROR_CODE = 500;
 
 /**
  * Throws an error when the requested resource cannot be found

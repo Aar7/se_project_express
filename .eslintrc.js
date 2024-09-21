@@ -1,6 +1,3 @@
-// console.log(834);
-const _or = 99;
-
 module.exports = {
   env: {
     es2021: true,

@@ -1,4 +1,3 @@
-const clothingItem = require("../models/clothingItem");
 const ClothingItem = require("../models/clothingItem");
 const { returnError } = require("../utils/errors");
 

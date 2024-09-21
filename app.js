@@ -15,7 +15,7 @@ app.use((req, res, next) => {
   };
   next();
 });
-module.exports.createClothingItem = (req, res) => {
+module.exports.createClothingItem = (req /* , res */) => {
   console.log(req.user._id);
 };
 

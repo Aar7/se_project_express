@@ -47,7 +47,8 @@ const returnError = (res, error) => {
 
   if (error.name === "ValidationError" || error.name === "CastError") {
     return res.status(BAD_REQUEST_CODE).send({ message: error.message });
-  } else if (error.name === "DocumentNotFoundError") {
+  }
+  if (error.name === "DocumentNotFoundError") {
     return res.status(NOT_FOUND_CODE).send({ message: error.message });
   }
   return res.status(INT_SERVER_ERROR_CODE).send({

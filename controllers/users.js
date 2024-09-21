@@ -1,9 +1,9 @@
 const User = require("../models/user");
-const { docNotFound, returnError } = require("../utils/errors");
+const { returnError } = require("../utils/errors");
 
 const getUsers = (req, res) => {
   User.find()
-    .orFail(docNotFound)
+    .orFail(/* docNotFound */)
     .then((users) => res.send(users))
     .catch((error) => {
       returnError(res, error);
@@ -12,9 +12,8 @@ const getUsers = (req, res) => {
 };
 
 const getUser = (req, res) => {
-  console.log(req.params.userId);
   User.findById(req.params.userId)
-    .orFail(docNotFound)
+    .orFail(/* docNotFound */)
     .then((user) => {
       res.send({ data: user });
     })

@@ -1,9 +1,10 @@
+const clothingItem = require("../models/clothingItem");
 const ClothingItem = require("../models/clothingItem");
-const { docNotFound, returnError } = require("../utils/errors");
+const { returnError } = require("../utils/errors");
 
 const getItems = (req, res) => {
   ClothingItem.find()
-    .orFail(docNotFound)
+    .orFail(/* docNotFound */)
     .then((items) => res.send(items))
     .catch((error) => returnError(res, error));
 };
@@ -22,9 +23,31 @@ const createItem = (req, res) => {
 
 const deleteItem = (req, res) => {
   ClothingItem.findByIdAndRemove(req.params.itemId)
-    .orFail(docNotFound)
+    .orFail(/* docNotFound */)
     .then((item) => res.send({ data: item }))
     .catch((error) => returnError(res, error));
 };
 
-module.exports = { getItems, createItem, deleteItem };
+const likeItem = (req, res) => {
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true }
+  )
+    .orFail()
+    .then((item) => res.send({ data: item }))
+    .catch((error) => returnError(res, error));
+};
+
+const dislikeItem = (req, res) => {
+  ClothingItem.findByIdAndUpdate(
+    req.params.itemId,
+    { $pull: { likes: req.user._id } },
+    { new: true }
+  )
+    .orFail()
+    .then((item) => res.send({ data: item }))
+    .catch((error) => returnError(res, error));
+};
+
+module.exports = { getItems, createItem, deleteItem, likeItem, dislikeItem };

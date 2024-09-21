@@ -1,35 +1,39 @@
-/**
- * Invalid data
- */
-const error_400 = {
-  statusCode: 400,
-  statusMsg: "Invalid data",
-};
+// /**
+//  * Invalid data
+//  */
+// const error_400 = {
+//   statusCode: 400,
+//   statusMsg: "Invalid data",
+// };
 
-/**
- * Resource not found
- */
-const error_404 = {
-  statusCode: 404,
-  statusMsg: "Resource not found",
-};
+// /**
+//  * Resource not found
+//  */
+// const error_404 = {
+//   statusCode: 404,
+//   statusMsg: "Resource not found",
+// };
 
-/**
- * Server error
- */
-const error_500 = {
-  statusCode: 500,
-  statusMsg: "Server error",
-};
+// /**
+//  * Server error
+//  */
+// const error_500 = {
+//   statusCode: 500,
+//   statusMsg: "Server error",
+// };
+
+BAD_REQUEST_CODE = 400;
+NOT_FOUND_CODE = 404;
+INT_SERVER_ERROR_CODE = 500;
 
 /**
  * Throws an error when the requested resource cannot be found
  */
-const docNotFound = () => {
-  const error = new Error(error_404.statusMsg);
-  error.statusCode = error_404.statusCode;
-  throw error;
-};
+// const docNotFound = () => {
+//   const error = new Error("Resource not found");
+//   error.statusCode = 404;
+//   throw error;
+// };
 
 /**
  * Determines the type of error that was thrown and returns it to the user
@@ -38,16 +42,18 @@ const docNotFound = () => {
  * @returns
  */
 const returnError = (res, error) => {
-  console.error(error);
-  if (error.statusCode === error_404.statusCode) {
-    return res
-      .status(error_404.statusCode)
-      .send({ message: error_404.statusMsg });
+  console.log(error);
+  console.error(error.name);
+
+  if (error.name === "ValidationError" || error.name === "CastError") {
+    return res.status(BAD_REQUEST_CODE).send({ message: error.message });
+  } else if (error.name === "DocumentNotFoundError") {
+    return res.status(NOT_FOUND_CODE).send({ message: error.message });
   } else {
-    return res.status(error_500.statusCode).send({
-      message: `${error_500.statusMsg}: an unknown error has occurred`,
+    return res.status(INT_SERVER_ERROR_CODE).send({
+      message: `${INT_SERVER_ERROR_CODE}: an unknown error has occurred`,
     });
   }
 };
 
-module.exports = { docNotFound, returnError };
+module.exports = { returnError };

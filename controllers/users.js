@@ -1,3 +1,4 @@
+const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const { returnError } = require("../utils/errors");
 
@@ -21,13 +22,16 @@ const getUser = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
-
-  User.create({ name, avatar })
-    .then((user) => res.send({ data: user }))
-    .catch((error) => {
-      returnError(res, error);
-    });
+  const { name, avatar, email } = req.body;
+  bcrypt.hash(req.body.password, 14).then((password) => {
+    User.create({ name, avatar, email, password })
+      .then((user) => {
+        res.send({ data: user });
+      })
+      .catch((error) => {
+        returnError(res, error);
+      });
+  });
 };
 
 module.exports = { getUsers, getUser, createUser };

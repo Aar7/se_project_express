@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Aar7/se_project_express#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.21.0",
     "mongoose": "^6.6.1",
     "validator": "^13.12.0"

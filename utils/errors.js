@@ -9,10 +9,15 @@ const INT_SERVER_ERROR_CODE = 500;
  * @returns
  */
 const returnError = (res, error) => {
-  console.log(error);
+  // console.log(error);
   console.error(error.name);
+  console.error(error.code);
 
-  if (error.name === "ValidationError" || error.name === "CastError") {
+  if (
+    error.name === "ValidationError" ||
+    error.name === "CastError" ||
+    error.name === "MongoServerError"
+  ) {
     return res.status(BAD_REQUEST_CODE).send({ message: error.message });
   }
   if (error.name === "DocumentNotFoundError") {

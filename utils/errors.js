@@ -9,7 +9,7 @@ const INT_SERVER_ERROR_CODE = 500;
  * @returns
  */
 const returnError = (res, error) => {
-  // console.log(error);
+  console.error(error);
   console.error(error.name);
   console.error(error.code);
 

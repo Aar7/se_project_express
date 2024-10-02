@@ -1,5 +1,5 @@
 const ClothingItem = require("../models/clothingItem");
-const { returnError } = require("../utils/errors");
+const { returnError, FORBIDDEN } = require("../utils/errors");
 
 const getItems = (req, res) => {
   ClothingItem.find()
@@ -21,13 +21,17 @@ const deleteItem = (req, res) => {
   ClothingItem.findOne(req.params.itemId)
     .orFail()
     .then((item) => {
-      if (item.owner === req.user._id) {
-        ClothingItem.findByIdAndRemove(req.params.itemId)
-          .orFail()
-          .then((item) => res.send({ data: item }))
-          .catch((error) => returnError(res, error));
+      if (item.owner !== req.user._id) {
+        return res
+          .status(FORBIDDEN)
+          .send({ message: "User action not allowed" });
       }
-    });
+      ClothingItem.findByIdAndRemove(req.params.itemId)
+        .orFail()
+        .then((item) => res.send({ data: item }))
+        .catch((error) => returnError(res, error));
+    })
+    .catch((error) => returnError(res, error));
 };
 
 const likeItem = (req, res) => {

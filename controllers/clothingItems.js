@@ -18,10 +18,16 @@ const createItem = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
-  ClothingItem.findByIdAndRemove(req.params.itemId)
+  ClothingItem.findOne(req.params.itemId)
     .orFail()
-    .then((item) => res.send({ data: item }))
-    .catch((error) => returnError(res, error));
+    .then((item) => {
+      if (item.owner === req.user._id) {
+        ClothingItem.findByIdAndRemove(req.params.itemId)
+          .orFail()
+          .then((item) => res.send({ data: item }))
+          .catch((error) => returnError(res, error));
+      }
+    });
 };
 
 const likeItem = (req, res) => {

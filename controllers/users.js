@@ -5,6 +5,7 @@ const {
   returnError,
   NOT_FOUND_CODE,
   INT_SERVER_ERROR_CODE,
+  BAD_REQUEST_CODE,
 } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
@@ -41,9 +42,7 @@ const createUser = (req, res) => {
 };
 
 const login = (req, res) => {
-  // get email and password from req.body
   const { email, password } = req.body;
-  // authentication: ensuring that the email and password match database entries
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
@@ -53,9 +52,7 @@ const login = (req, res) => {
     })
     .catch((error) => {
       returnError(res, error);
-      // res.status(401).send({ message: error.message });
     });
-  // if authentication passes, create a JWT with 1 week life
 };
 
 const getCurrentUser = (req, res) => {
@@ -64,15 +61,50 @@ const getCurrentUser = (req, res) => {
 
     User.findById(userId).then((user) => {
       if (!user) {
-        return returnError(res, error);
-        // return res.status(NOT_FOUND_CODE).send({ message: "User not found" });
+        returnError(res, error);
+        throw new Error("User not found");
       }
-      return user;
+      return res.send(user);
     });
   } catch (error) {
     returnError(res, error);
-    // res.status(INT_SERVER_ERROR_CODE).send({ message: error.message });
   }
 };
 
-module.exports = { getUsers, getUser, createUser, login, getCurrentUser };
+const updateProfile = async (req, res) => {
+  const { name, avatar } = req.body;
+  const userId = req.user._id;
+
+  if (name === undefined && avatar === undefined) {
+    return res.status(BAD_REQUEST_CODE).send({ message: "Fields empty" });
+  }
+
+  try {
+    const update = {};
+
+    if (name !== undefined) {
+      update.name = name;
+    }
+    if (avatar !== undefined) {
+      update.avatar = avatar;
+    }
+
+    const currentUser = await User.findByIdAndUpdate(userId, update, {
+      new: true,
+      runValidators: true,
+    }).orFail();
+
+    return res.send(currentUser);
+  } catch (error) {
+    return returnError(res, error);
+  }
+};
+
+module.exports = {
+  getUsers,
+  getUser,
+  createUser,
+  login,
+  getCurrentUser,
+  updateProfile,
+};

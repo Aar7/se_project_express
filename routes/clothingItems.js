@@ -1,4 +1,5 @@
 const clothingItemsRouter = require("express").Router();
+const auth = require("../middlewares/auth");
 const {
   getItems,
   createItem,
@@ -8,12 +9,9 @@ const {
 } = require("../controllers/clothingItems");
 
 clothingItemsRouter.get("/", getItems);
-
-clothingItemsRouter.post("/", createItem);
-
-clothingItemsRouter.delete("/:itemId", deleteItem);
-
-clothingItemsRouter.put("/:itemId/likes", likeItem);
-clothingItemsRouter.delete("/:itemId/likes", dislikeItem);
+clothingItemsRouter.post("/", auth, createItem);
+clothingItemsRouter.delete("/:itemId", auth, deleteItem);
+clothingItemsRouter.put("/:itemId/likes", auth, likeItem);
+clothingItemsRouter.delete("/:itemId/likes", auth, dislikeItem);
 
 module.exports = clothingItemsRouter;

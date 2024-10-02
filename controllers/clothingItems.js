@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const ClothingItem = require("../models/clothingItem");
 const { returnError, FORBIDDEN } = require("../utils/errors");
 
@@ -18,10 +19,14 @@ const createItem = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
-  ClothingItem.findOne(req.params.itemId)
+  const userId = JSON.stringify(new mongoose.Types.ObjectId(req.user._id));
+  // const usridkeys = Object.keys(userIdObject);
+  ClothingItem.findOne({ _id: req.params.itemId })
     .orFail()
     .then((item) => {
-      if (item.owner !== req.user._id) {
+      const ownerId = JSON.stringify(item.owner);
+      // if (item.owner != userIdObject) {
+      if (ownerId != userId) {
         return res
           .status(FORBIDDEN)
           .send({ message: "User action not allowed" });
@@ -29,9 +34,13 @@ const deleteItem = (req, res) => {
       ClothingItem.findByIdAndRemove(req.params.itemId)
         .orFail()
         .then((item) => res.send({ data: item }))
-        .catch((error) => returnError(res, error));
+        .catch((error) => {
+          return returnError(res, error);
+        });
     })
-    .catch((error) => returnError(res, error));
+    .catch((error) => {
+      return returnError(res, error);
+    });
 };
 
 const likeItem = (req, res) => {

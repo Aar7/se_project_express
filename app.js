@@ -9,13 +9,6 @@ mongoose
   .then(() => console.log("Connected to database\n\n\n\n\n"))
   .catch(console.error);
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "66eddbd0382b6d8a70865d3d",
-  };
-  next();
-});
-
 app.use(express.json());
 app.use("/", mainRouter);
 

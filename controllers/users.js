@@ -1,12 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const {
-  returnError,
-  NOT_FOUND_CODE,
-  INT_SERVER_ERROR_CODE,
-  BAD_REQUEST_CODE,
-} = require("../utils/errors");
+const { returnError, BAD_REQUEST_CODE } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
 const getUsers = (req, res) => {
@@ -19,7 +14,7 @@ const getUsers = (req, res) => {
 
 const getUser = (req, res) => {
   User.findById(req.params.userId)
-    .orFail(/* docNotFound */)
+    .orFail()
     .then((user) => {
       res.send({ data: user });
     })
@@ -69,7 +64,6 @@ const getCurrentUser = (req, res) => {
 
     User.findById(userId).then((user) => {
       if (!user) {
-        returnError(res, error);
         throw new Error("User not found");
       }
       return res.send(user);

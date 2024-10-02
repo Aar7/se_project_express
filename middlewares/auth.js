@@ -18,5 +18,5 @@ module.exports = (req, res, next) => {
     return res.status(BAD_REQUEST_CODE).send({ message: error.message });
   }
   req.user = payload;
-  next();
+  return next();
 };

@@ -14,7 +14,6 @@ const returnError = (res, error) => {
   console.error(error);
   console.error(`ERROR NAME: ${error.name}`);
   console.error(`ERROR CODE: ${error.code}`);
-  // console.error(error.code);
 
   if (
     error.name === "ValidationError" ||

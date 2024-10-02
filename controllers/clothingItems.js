@@ -19,13 +19,11 @@ const createItem = (req, res) => {
 };
 
 const deleteItem = (req, res) => {
-  const userId = JSON.stringify(new mongoose.Types.ObjectId(req.user._id));
-  // const usridkeys = Object.keys(userIdObject);
   ClothingItem.findOne({ _id: req.params.itemId })
     .orFail()
     .then((item) => {
+      const userId = JSON.stringify(new mongoose.Types.ObjectId(req.user._id));
       const ownerId = JSON.stringify(item.owner);
-      // if (item.owner != userIdObject) {
       if (ownerId != userId) {
         return res
           .status(FORBIDDEN)
@@ -33,7 +31,7 @@ const deleteItem = (req, res) => {
       }
       ClothingItem.findByIdAndRemove(req.params.itemId)
         .orFail()
-        .then((item) => res.send({ data: item }))
+        .then(/* (item) =>  */ res.send({ data: item }))
         .catch((error) => {
           return returnError(res, error);
         });

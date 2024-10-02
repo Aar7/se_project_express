@@ -33,7 +33,13 @@ const createUser = (req, res) => {
   bcrypt.hash(req.body.password, 14).then((password) => {
     User.create({ name, avatar, email, password })
       .then((user) => {
-        res.send({ data: user });
+        res.send({
+          data: {
+            name: user.name,
+            avatar: user.avatar,
+            email: user.email,
+          },
+        });
       })
       .catch((error) => {
         returnError(res, error);
@@ -48,14 +54,16 @@ const login = (req, res) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.send(token);
+      res.json(token);
     })
     .catch((error) => {
+      console.log("catch block");
       returnError(res, error);
     });
 };
 
 const getCurrentUser = (req, res) => {
+  console.error(req.user);
   try {
     const userId = req.user._id;
 

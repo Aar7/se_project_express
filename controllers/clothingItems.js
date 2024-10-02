@@ -24,21 +24,16 @@ const deleteItem = (req, res) => {
     .then((item) => {
       const userId = JSON.stringify(new mongoose.Types.ObjectId(req.user._id));
       const ownerId = JSON.stringify(item.owner);
-      if (ownerId != userId) {
+      if (ownerId !== userId) {
         return res
           .status(FORBIDDEN)
           .send({ message: "User action not allowed" });
       }
-      ClothingItem.findByIdAndRemove(req.params.itemId)
+      return ClothingItem.findByIdAndRemove(req.params.itemId)
         .orFail()
-        .then(/* (item) =>  */ res.send({ data: item }))
-        .catch((error) => {
-          return returnError(res, error);
-        });
+        .then((removedItem) => res.send({ data: removedItem }));
     })
-    .catch((error) => {
-      return returnError(res, error);
-    });
+    .catch((error) => returnError(res, error));
 };
 
 const likeItem = (req, res) => {

@@ -31,7 +31,7 @@ const login = (req, res) => {
       .status(BAD_REQUEST_CODE)
       .send({ message: "Email and password are required" });
   }
-  User.findUserByCredentials(email, password)
+  return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
@@ -51,9 +51,7 @@ const getCurrentUser = (req, res) => {
 
     User.findById(userId)
       .orFail()
-      .then((user) => {
-        return res.send(user);
-      });
+      .then((user) => res.send(user));
   } catch (error) {
     returnError(res, error);
   }

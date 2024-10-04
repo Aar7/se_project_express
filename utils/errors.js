@@ -16,11 +16,7 @@ const returnError = (res, error) => {
   console.error(`ERROR NAME: ${error.name}`);
   console.error(`ERROR CODE: ${error.code}`);
 
-  if (
-    error.name === "ValidationError" ||
-    error.name === "CastError" ||
-    error.name === "Error"
-  ) {
+  if (error.name === "ValidationError" || error.name === "CastError") {
     return res.status(BAD_REQUEST_CODE).send({ message: error.message });
   }
   if (error.name === "DocumentNotFoundError") {
@@ -28,6 +24,9 @@ const returnError = (res, error) => {
   }
   if (error.name === "MongoServerError") {
     return res.status(CONFLICT).send({ message: error.message });
+  }
+  if (error.message === "LoginError") {
+    return res.status(UNAUTH).send({ message: error.message });
   }
   return res.status(INT_SERVER_ERROR_CODE).send({
     message: `${INT_SERVER_ERROR_CODE}: an unknown error has occurred`,

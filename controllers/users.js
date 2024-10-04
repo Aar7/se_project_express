@@ -4,25 +4,6 @@ const User = require("../models/user");
 const { returnError, BAD_REQUEST_CODE } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
-const getUsers = (req, res) => {
-  User.find()
-    .then((users) => res.send(users))
-    .catch((error) => {
-      returnError(res, error);
-    });
-};
-
-const getUser = (req, res) => {
-  User.findById(req.params.userId)
-    .orFail()
-    .then((user) => {
-      res.send({ data: user });
-    })
-    .catch((error) => {
-      returnError(res, error);
-    });
-};
-
 const createUser = (req, res) => {
   const { name, avatar, email } = req.body;
   bcrypt.hash(req.body.password, 14).then((password) => {
@@ -44,6 +25,12 @@ const createUser = (req, res) => {
 
 const login = (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(BAD_REQUEST_CODE)
+      .send({ message: "Email and password are required" });
+  }
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
@@ -62,12 +49,11 @@ const getCurrentUser = (req, res) => {
   try {
     const userId = req.user._id;
 
-    User.findById(userId).then((user) => {
-      if (!user) {
-        throw new Error("User not found");
-      }
-      return res.send(user);
-    });
+    User.findById(userId)
+      .orFail()
+      .then((user) => {
+        return res.send(user);
+      });
   } catch (error) {
     returnError(res, error);
   }
@@ -84,12 +70,8 @@ const updateProfile = async (req, res) => {
   try {
     const update = {};
 
-    if (name !== undefined) {
-      update.name = name;
-    }
-    if (avatar !== undefined) {
-      update.avatar = avatar;
-    }
+    update.name = name;
+    update.avatar = avatar;
 
     const currentUser = await User.findByIdAndUpdate(userId, update, {
       new: true,

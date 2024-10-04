@@ -1,4 +1,5 @@
 const BAD_REQUEST_CODE = 400;
+const UNAUTH = 401;
 const FORBIDDEN = 403;
 const NOT_FOUND_CODE = 404;
 const CONFLICT = 409;
@@ -36,6 +37,7 @@ const returnError = (res, error) => {
 module.exports = {
   returnError,
   BAD_REQUEST_CODE,
+  UNAUTH,
   FORBIDDEN,
   NOT_FOUND_CODE,
   INT_SERVER_ERROR_CODE,

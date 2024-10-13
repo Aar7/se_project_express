@@ -4,27 +4,35 @@ const User = require("../models/user");
 const { returnError, BAD_REQUEST_CODE } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
-const createUser = (req, res) => {
-  const { name, avatar, email } = req.body;
-  bcrypt.hash(req.body.password, 14).then((password) => {
-    User.create({ name, avatar, email, password })
-      .then((user) => {
-        res.send({
-          data: {
-            name: user.name,
-            avatar: user.avatar,
-            email: user.email,
-          },
-        });
-      })
-      .catch((error) => {
-        returnError(res, error);
-      });
-  });
+const createUser = async (req, res) => {
+  const { name, avatar, email, password } = req.body;
+
+  try {
+    const pwordHash = await bcrypt.hash(password, 14);
+    const user = await User.create({
+      name,
+      avatar,
+      email,
+      password: pwordHash,
+    });
+
+    res.send({
+      data: {
+        name: user.name,
+        avatar: user.avatar,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    returnError(res, error);
+  }
 };
 
 const login = (req, res) => {
+  console.log(`backend login called`);
   const { email, password } = req.body;
+  console.log(email);
+  console.log(password);
 
   if (!email || !password) {
     return res
@@ -33,10 +41,11 @@ const login = (req, res) => {
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      const { name, email, avatar } = user;
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.json({ token });
+      res.json({ token, name: name, email: email, avatar: avatar });
     })
     .catch((error) => {
       console.log("catch block");

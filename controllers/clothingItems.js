@@ -37,13 +37,18 @@ const deleteItem = (req, res) => {
 };
 
 const likeItem = (req, res) => {
+  console.log("req.params.itemId: ", req.params.itemId);
+  console.log("req.user._id: ", req.user._id);
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
     .orFail()
-    .then((item) => res.send({ data: item }))
+    .then((item) => {
+      console.log("Item from likeItem on backend: ", item);
+      res.send({ data: item });
+    })
     .catch((error) => returnError(res, error));
 };
 

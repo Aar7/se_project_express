@@ -41,11 +41,11 @@ const login = (req, res) => {
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const { name, email, avatar } = user;
+      const { name, email, avatar, _id } = user;
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.json({ token, name: name, email: email, avatar: avatar });
+      res.json({ token, name: name, email: email, avatar: avatar, _id: _id });
     })
     .catch((error) => {
       console.log("catch block");

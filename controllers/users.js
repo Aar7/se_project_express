@@ -3,7 +3,13 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const { returnError, BAD_REQUEST_CODE } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
-import * as errors from "../middlewares/customErrors";
+const {
+  BadRequestError,
+  UnauthorizedError,
+  ForbiddenError,
+  NotFoundError,
+  ConflictError,
+} = require("../middlewares/customErrors");
 
 const createUser = async (req, res) => {
   const { name, avatar, email, password } = req.body;

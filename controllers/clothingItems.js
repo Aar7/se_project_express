@@ -1,7 +1,13 @@
 const { default: mongoose } = require("mongoose");
 const ClothingItem = require("../models/clothingItem");
 const { returnError, FORBIDDEN } = require("../utils/errors");
-import * as errors from "../middlewares/customErrors";
+const {
+  BadRequestError,
+  UnauthorizedError,
+  ForbiddenError,
+  NotFoundError,
+  ConflictError,
+} = require("../middlewares/customErrors");
 
 const getItems = (req, res) => {
   ClothingItem.find()
@@ -37,20 +43,31 @@ const deleteItem = (req, res) => {
     .catch((error) => returnError(res, error));
 };
 
-const likeItem = (req, res) => {
-  console.log("req.params.itemId: ", req.params.itemId);
-  console.log("req.user._id: ", req.user._id);
+const likeItem = (req, res, next) => {
+  // console.log("req.params.itemId: ", req.params.itemId);
+  // console.log("req.user._id: ", req.user._id);
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
+    // 222,
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
-    .orFail()
+    // .orFail()
     .then((item) => {
+      if (!item) {
+        throw new NotFoundError("Card was not found...");
+      }
       console.log("Item from likeItem on backend: ", item);
       res.send({ data: item });
     })
-    .catch((error) => returnError(res, error));
+    // .catch((error) => returnError(res, error));
+    .catch((error) => {
+      if (error.name === "CastError") {
+        next(new BadRequestError("The requested document could not be found"));
+      } else {
+        next(error);
+      }
+    });
 };
 
 const dislikeItem = (req, res) => {

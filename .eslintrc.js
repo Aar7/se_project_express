@@ -22,5 +22,6 @@ module.exports = {
   rules: {
     "no-underscore-dangle": 0,
     "no-console": 0,
+    "no-unused-vars": ["error", { argsIgnorePattern: "next" }],
   },
 };

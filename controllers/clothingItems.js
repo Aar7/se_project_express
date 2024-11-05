@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const ClothingItem = require("../models/clothingItem");
 const { returnError, FORBIDDEN } = require("../utils/errors");
+import * as errors from "../middlewares/customErrors";
 
 const getItems = (req, res) => {
   ClothingItem.find()

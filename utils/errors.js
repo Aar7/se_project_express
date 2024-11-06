@@ -6,7 +6,8 @@ const CONFLICT = 409;
 const INT_SERVER_ERROR_CODE = 500;
 
 /**
- * Determines the type of error that was thrown and returns it to the user
+ * Determines the type of error that was thrown and returns contextually relevant
+ * information to the user.
  * @param {object} res
  * @param {object} error
  * @returns

@@ -1,6 +1,6 @@
 const clothingItemsRouter = require("express").Router();
 const auth = require("../middlewares/auth");
-const { errorHandler } = require("../middlewares/errorHandler");
+const errorHandler = require("../middlewares/errorHandler");
 const {
   getItems,
   createItem,

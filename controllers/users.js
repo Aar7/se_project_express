@@ -1,15 +1,11 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-const { returnError, BAD_REQUEST_CODE } = require("../utils/errors");
+// const { returnError, BAD_REQUEST_CODE } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
-const {
-  BadRequestError,
-  UnauthorizedError,
-  ForbiddenError,
-  NotFoundError,
-  ConflictError,
-} = require("../middlewares/customErrors");
+
+const BadRequestError = require("../middlewares/BadRequestError");
+const NotFoundError = require("../middlewares/NotFoundError");
 
 const createUser = async (req, res, next) => {
   const { name, avatar, email, password } = req.body;
@@ -64,11 +60,11 @@ const login = (req, res, next) => {
   }
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const { name, email, avatar, _id } = user;
+      const { name, userEmail, avatar, _id } = user;
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      res.json({ token, name: name, email: email, avatar: avatar, _id: _id });
+      res.json({ token, name, email: userEmail, avatar, _id });
     })
     .catch((error) => {
       console.log("catch block");
@@ -123,13 +119,13 @@ const updateProfile = async (req, res, next) => {
   } catch (error) {
     // return returnError(res, error);
     if (error.name === "DocumentNotFoundError") {
-      next(
+      return next(
         new NotFoundError(
           "User profile-information could not be found and updated"
         )
       );
     }
-    next(error);
+    return next(error);
   }
 };
 

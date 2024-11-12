@@ -1,5 +1,6 @@
 const { Joi, celebrate } = require("celebrate");
 const validator = require("validator");
+
 const mongoIdRegex = /[a-f0-9]{24}/;
 
 const validateURL = (value, helpers) => {
@@ -8,7 +9,7 @@ const validateURL = (value, helpers) => {
   }
   return helpers.error("string.uri");
 };
-validateItemInfo = celebrate({
+module.exports.validateItemInfo = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30).messages({
       "string.min": 'The minimum length of the "name" field is 2',
@@ -22,7 +23,7 @@ validateItemInfo = celebrate({
   }),
 });
 
-validateNewUserInfo = celebrate({
+module.exports.validateNewUserInfo = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).messages({
       "string.min": 'The minimum length of the "name" field is 2',
@@ -42,7 +43,7 @@ validateNewUserInfo = celebrate({
   }),
 });
 
-validateUserLogin = celebrate({
+module.exports.validateUserLogin = celebrate({
   body: Joi.object().keys({
     email: Joi.string().custom(validator.isEmail()).messages({
       "string.empty": 'The "email" field must be filled in',
@@ -53,7 +54,7 @@ validateUserLogin = celebrate({
   }),
 });
 
-validateDocumentId = celebrate({
+module.exports.validateDocumentId = celebrate({
   params: Joi.object().keys({
     itemId: Joi.string().regex(mongoIdRegex),
   }),

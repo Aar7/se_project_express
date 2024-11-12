@@ -1,13 +1,9 @@
 const { default: mongoose } = require("mongoose");
 const ClothingItem = require("../models/clothingItem");
-// const { returnError, FORBIDDEN } = require("../utils/errors");
-const {
-  BadRequestError,
-  UnauthorizedError,
-  ForbiddenError,
-  NotFoundError,
-  ConflictError,
-} = require("../middlewares/customErrors");
+const BadRequestError = require("../middlewares/BadRequestError");
+const UnauthorizedError = require("../middlewares/UnauthorizedError");
+const NotFoundError = require("../middlewares/NotFoundError");
+const ConflictError = require("../middlewares/ConflictError");
 
 const getItems = (req, res, next) => {
   ClothingItem.find()

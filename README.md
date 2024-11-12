@@ -4,6 +4,7 @@
 
 1. Description
 2. Description of technologies used
+3. Relevant links
 
 ### Description
 
@@ -28,3 +29,7 @@ A `JSON` document database that supports various queries and indexing.
 `npm run start` — to launch the server
 
 `npm run dev` — to launch the server with the hot reload feature
+
+### Relevant links
+
+- Domain: [aarwtwr.fairuse.org](https://aarwtwr.fairuse.org)

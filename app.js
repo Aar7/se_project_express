@@ -15,16 +15,21 @@ mongoose
   .then(() => console.log("Connected to database\n\n\n\n\n"))
   .catch(console.error);
 
-app.use(cors());
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "https://aarwtwr.fairuse.org");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, PATCH"
-  );
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  next();
-});
+app.use(
+  cors({
+    origin: "https://aarwtwr.fairuse.org",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  })
+);
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "https://aarwtwr.fairuse.org");
+//   res.setHeader(
+//     "Access-Control-Allow-Methods",
+//     "GET, POST, PUT, DELETE, PATCH"
+//   );
+//   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+//   next();
+// });
 app.use(express.json());
 app.use(requestLogger);
 app.get("/crash-test", () => {

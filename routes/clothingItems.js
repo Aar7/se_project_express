@@ -2,8 +2,6 @@ const clothingItemsRouter = require("express").Router();
 const auth = require("../middlewares/auth");
 const {
   validateItemInfo,
-  validateNewUserInfo,
-  validateUserLogin,
   validateDocumentId,
 } = require("../middlewares/validation");
 const {

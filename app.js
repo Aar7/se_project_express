@@ -18,10 +18,11 @@ mongoose
 
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? "https://www.aarwtwr.fairuse.org"
-        : "http://localhost:3000",
+    // origin:
+    //   process.env.NODE_ENV === "production"
+    //     ? "https://www.aarwtwr.fairuse.org"
+    //     : "http://localhost:3000",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   })
 );

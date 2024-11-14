@@ -1,8 +1,11 @@
 const signinRouter = require("express").Router();
 const { login, createUser } = require("../controllers/users");
-const errorHandler = require("../middlewares/errorHandler");
+const {
+  validateNewUserInfo,
+  validateUserLogin,
+} = require("../middlewares/validation");
 
-signinRouter.post("/signup", errorHandler, createUser);
-signinRouter.post("/signin", errorHandler, login);
+signinRouter.post("/signup", validateNewUserInfo, createUser);
+signinRouter.post("/signin", validateUserLogin, login);
 
 module.exports = signinRouter;

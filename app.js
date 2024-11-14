@@ -6,6 +6,7 @@ const cors = require("cors");
 const mainRouter = require("./routes/index");
 const errorHandler = require("./middlewares/errorHandler");
 const { requestLogger, errorLogger } = require("./middlewares/logger");
+const limiter = require("./utils/rateLimiter");
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
   next();
 });
+app.use(limiter);
 app.use(express.json());
 app.use(requestLogger);
 app.get("/crash-test", () => {

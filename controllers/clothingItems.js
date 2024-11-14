@@ -1,9 +1,8 @@
 const { default: mongoose } = require("mongoose");
 const ClothingItem = require("../models/clothingItem");
 const BadRequestError = require("../middlewares/BadRequestError");
-const UnauthorizedError = require("../middlewares/UnauthorizedError");
 const NotFoundError = require("../middlewares/NotFoundError");
-const ConflictError = require("../middlewares/ConflictError");
+const ForbiddenError = require("../middlewares/ForbiddenError");
 
 const getItems = (req, res, next) => {
   ClothingItem.find()
@@ -13,7 +12,6 @@ const getItems = (req, res, next) => {
       }
       res.send(items);
     })
-    // .catch((error) => returnError(res, error));
     .catch(next);
 };
 
@@ -23,8 +21,8 @@ const createItem = (req, res, next) => {
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => res.send({ data: item }))
     .catch((error) => {
-      if (error.name === "MongoError") {
-        next(new ConflictError("An item with identical data already exists"));
+      if (error.name === "ValidationError") {
+        next(new BadRequestError("An item with identical data already exists"));
       }
       next(error);
     });
@@ -37,46 +35,40 @@ const deleteItem = (req, res, next) => {
       const userId = JSON.stringify(new mongoose.Types.ObjectId(req.user._id));
       const ownerId = JSON.stringify(item.owner);
       if (ownerId !== userId) {
-        // return res
-        //   .status(FORBIDDEN)
-        //   .send({ message: "User action not allowed" });
-        next(new UnauthorizedError("User action not allowed"));
+        next(new ForbiddenError("User action not allowed"));
       }
       return ClothingItem.findByIdAndRemove(req.params.itemId)
         .orFail()
         .then((removedItem) => res.send({ data: removedItem }));
     })
-    // .catch((error) => returnError(res, error));
     .catch((error) => {
       if (error.name === "ValidationError" || error.name === "CastError") {
         next(new BadRequestError("Invalid card information"));
+      } else if (error.name === "DocumentNotFoundError") {
+        next(new NotFoundError("The requested resource could not be found"));
       }
+      next(error);
     });
 };
 
 const likeItem = (req, res, next) => {
-  // console.log("req.params.itemId: ", req.params.itemId);
-  // console.log("req.user._id: ", req.user._id);
   ClothingItem.findByIdAndUpdate(
     req.params.itemId,
-    // 222,
     { $addToSet: { likes: req.user._id } },
     { new: true }
   )
     .orFail()
     .then((item) => {
-      if (!item) {
-        throw new NotFoundError("Card was not found...");
-      }
       console.log("Item from likeItem on backend: ", item);
       res.send({ data: item });
     })
     .catch((error) => {
       if (error.name === "ValidationError" || error.name === "CastError") {
         next(new BadRequestError("The requested document could not be found"));
-      } else {
-        next(error);
+      } else if (error.name === "DocumentNotFoundError") {
+        next(new NotFoundError("The requested resource could not be found"));
       }
+      next(error);
     });
 };
 
@@ -88,17 +80,15 @@ const dislikeItem = (req, res, next) => {
   )
     .orFail()
     .then((item) => {
-      if (!item) {
-        throw new NotFoundError("Card was not found...");
-      }
       res.send({ data: item });
     })
     .catch((error) => {
       if (error.name === "ValidationError" || error.name === "CastError") {
         next(new BadRequestError("The requested document could not be found"));
-      } else {
-        next(error);
+      } else if (error.name === "DocumentNotFoundError") {
+        next(new NotFoundError("The requested resource could not be found"));
       }
+      next(error);
     });
 };
 

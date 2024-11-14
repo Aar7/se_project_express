@@ -1,11 +1,11 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
-// const { returnError, BAD_REQUEST_CODE } = require("../utils/errors");
 const { JWT_SECRET } = require("../utils/config");
 
 const BadRequestError = require("../middlewares/BadRequestError");
 const NotFoundError = require("../middlewares/NotFoundError");
+const ConflictError = require("../middlewares/ConflictError");
 
 const createUser = async (req, res, next) => {
   const { name, avatar, email, password } = req.body;
@@ -27,22 +27,12 @@ const createUser = async (req, res, next) => {
       },
     });
   } catch (error) {
-    // returnError(res, error);
-    // if (
-    //   error.message === "TypeError: Data must be a string or a buffer" ||
-    //   error.message === "Error: Invalid number of rounds" ||
-    //   error.message === "Error: bcrypt: invalid salt" ||
-    //   error.message === "Error: bcrypt: not a valid hash" ||
-    //   error.message === "Error: Invalid hash string" ||
-    //   error.message ===
-    //     "Error: Hash has already been created, cannot hash again" ||
-    //   error.message === "Error: Out of memory" ||
-    //   error.message === "Error: Failed to build bcrypt" ||
-    //   error.message ===
-    //     "UnhandledPromiseRejectionWarning: Error: bcrypt: invalid salt"
-    // ) {
+    if (error.code === 11000) {
+      next(new ConflictError("One or more fields of data already exist"));
+    } else if (error.name === "ValidationError") {
+      next(new BadRequestError("Some data entered is invalid"));
+    }
     next(error);
-    // }
   }
 };
 
@@ -53,9 +43,6 @@ const login = (req, res, next) => {
   console.log(password);
 
   if (!email || !password) {
-    // return res
-    //   .status(BAD_REQUEST_CODE)
-    //   .send({ message: "Email and password are required" });
     next(new BadRequestError("Email and password are required"));
   }
   return User.findUserByCredentials(email, password)
@@ -68,7 +55,6 @@ const login = (req, res, next) => {
     })
     .catch((error) => {
       console.log("catch block");
-      // returnError(res, error);
       next(error);
     });
 };
@@ -81,13 +67,9 @@ const getCurrentUser = (req, res, next) => {
     User.findById(userId)
       .orFail()
       .then((user) => {
-        if (!user) {
-          next(new NotFoundError("User cannot be found :("));
-        }
         res.send(user);
       });
   } catch (error) {
-    // returnError(res, error);
     if (error.name === "DocumentNotFoundError") {
       next(new NotFoundError("User cannot be found :("));
     }
@@ -100,7 +82,6 @@ const updateProfile = async (req, res, next) => {
   const userId = req.user._id;
 
   if (name === undefined && avatar === undefined) {
-    // return res.status(BAD_REQUEST_CODE).send({ message: "Fields empty" });
     next(new BadRequestError("Fields are empty"));
   }
 
@@ -117,8 +98,9 @@ const updateProfile = async (req, res, next) => {
 
     return res.send(currentUser);
   } catch (error) {
-    // return returnError(res, error);
-    if (error.name === "DocumentNotFoundError") {
+    if (error.name === "ValidationError") {
+      next(new BadRequestError("Some data entered is invalid"));
+    } else if (error.name === "DocumentNotFoundError") {
       return next(
         new NotFoundError(
           "User profile-information could not be found and updated"

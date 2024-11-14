@@ -9,7 +9,7 @@ const NotFoundError = require("../middlewares/NotFoundError");
 router.use("/", signinRouter);
 router.use("/users", auth, userRouter);
 router.use("/items", clothingItemsRouter);
-router.use((req, res) => {
+router.use(() => {
   throw new NotFoundError("Route does not exist");
 });
 

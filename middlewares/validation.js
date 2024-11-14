@@ -9,6 +9,13 @@ const validateURL = (value, helpers) => {
   }
   return helpers.error("string.uri");
 };
+
+const validateEmail = (value, helpers) => {
+  if (validator.isEmail(value)) {
+    return value;
+  }
+  return helpers.error("any.invalid");
+};
 module.exports.validateItemInfo = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30).messages({
@@ -35,8 +42,9 @@ module.exports.validateNewUserInfo = celebrate({
       "string.uri": 'the "imageUrl" field must be a valid url',
       "string.empty": 'The "imageUrl" field must be filled in',
     }),
-    email: Joi.string().required().custom(validator.isEmail()).messages({
+    email: Joi.string().required().custom(validateEmail).messages({
       "string.empty": 'The "email" field must be filled in',
+      "any.invalid": 'The "email" field must be a valid email address',
     }),
     password: Joi.string().required().messages({
       "string.empty": 'The "password" field must me filled in',
@@ -60,8 +68,9 @@ module.exports.validateUpdateUserInfo = celebrate({
 
 module.exports.validateUserLogin = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().custom(validator.isEmail()).messages({
+    email: Joi.string().custom(validateEmail).messages({
       "string.empty": 'The "email" field must be filled in',
+      "any.invalid": 'The "email" field must be a valid email address',
     }),
     password: Joi.string().required().messages({
       "string.empty": 'The "password" field must me filled in',

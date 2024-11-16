@@ -32,4 +32,4 @@ A `JSON` document database that supports various queries and indexing.
 
 ### Relevant links
 
-- Domain: [aarwtwr.fairuse.org](https://aarwtwr.fairuse.org)
+- Domain: [aarwtwr.crabdance.com](https://aarwtwr.crabdance.com)
